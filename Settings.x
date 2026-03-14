@@ -297,6 +297,60 @@ static NSString *GetCacheSize() {
 
     [sectionItems addObject:tabbar];
 
+    YTSettingsSectionItem *feed = [YTSettingsSectionItemClass itemWithTitle:LOC(@"Feed")
+    accessibilityIdentifier:@"YTLiteSectionItem"
+    detailTextBlock:^NSString *() {
+        return @"‣";
+    }
+    selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+        NSArray <YTSettingsSectionItem *> *rows = @[
+            [self switchWithTitle:@"RemoveAds" key:@"noAds"],
+            [self switchWithTitle:@"HideShorts" key:@"hideShorts"],
+            [self switchWithTitle:@"KeepSubsShorts" key:@"keepSubsShorts"],
+            [self switchWithTitle:@"RemoveCommunityPosts" key:@"removeCommunityPosts"],
+            [self switchWithTitle:@"RemoveMixPlaylists" key:@"removeMixPlaylists"],
+            [self switchWithTitle:@"RemoveLiveVids" key:@"removeLiveVids"],
+            [self switchWithTitle:@"RemoveHorizontalFeeds" key:@"removeHorizontalFeeds"],
+            [self switchWithTitle:@"RemoveMoreTopics" key:@"removeMoreTopics"],
+            [self switchWithTitle:@"RemovePlayables" key:@"removePlayables"],
+
+            [%c(YTSettingsSectionItem) itemWithTitle:LOC(@"BlockedTerms") titleDescription:LOC(@"BlockedTermsDesc") accessibilityIdentifier:@"YTLiteSectionItem" detailTextBlock:^NSString *() {
+                NSString *s = [[YTLUserDefaults standardUserDefaults] stringForKey:@"feedBlockedTerms"];
+                if (!s || s.length == 0) return LOC(@"BlockedTermsNone");
+                NSArray *parts = [s componentsSeparatedByString:@"\n"];
+                return [NSString stringWithFormat:@"%lu", (unsigned long)parts.count];
+            } selectBlock:^BOOL (YTSettingsCell *innerCell, NSUInteger innerArg) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOC(@"BlockedTerms") message:LOC(@"BlockedTermsDesc") preferredStyle:UIAlertControllerStyleAlert];
+
+                [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                    textField.placeholder = LOC(@"BlockedTermsPlaceholder");
+                    textField.text = [[YTLUserDefaults standardUserDefaults] stringForKey:@"feedBlockedTerms"];
+                }];
+
+                UIAlertAction *cancel = [UIAlertAction actionWithTitle:LOC(@"Cancel") style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *save = [UIAlertAction actionWithTitle:LOC(@"Save") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UITextField *tf = alert.textFields.firstObject;
+                    NSString *value = tf.text ?: @"";
+                    [[YTLUserDefaults standardUserDefaults] setObject:value forKey:@"feedBlockedTerms"];
+                }];
+
+                [alert addAction:cancel];
+                [alert addAction:save];
+
+                UIViewController *top = [%c(YTUIUtils) topViewControllerForPresenting];
+                [top presentViewController:alert animated:YES completion:nil];
+
+                return YES;
+            }]
+        ];
+
+        YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"Feed") pickerSectionTitle:nil rows:rows selectedItemIndex:NSNotFound parentResponder:[self parentResponder]];
+        [settingsViewController pushViewController:picker];
+        return YES;
+    }];
+
+    [sectionItems addObject:feed];
+
     if (ytlBool(@"advancedMode")) {
         YTSettingsSectionItem *other = [YTSettingsSectionItemClass itemWithTitle:LOC(@"Other")
         accessibilityIdentifier:@"YTLiteSectionItem"
