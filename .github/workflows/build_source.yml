@@ -103,6 +103,7 @@ jobs:
         run: |
           cd $THEOS/include && git clone --quiet --depth=1 https://github.com/PoomSmart/YouTubeHeader.git
           cd $THEOS/include && git clone --quiet --depth=1 https://github.com/PoomSmart/PSHeader.git
+          echo "#define jbroot(path) path" > $THEOS/include/roothide.h
 
       - name: Build Tweak
         run: |
