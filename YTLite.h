@@ -14,6 +14,9 @@
 #define ytlSetBool(value, key) [[YTLUserDefaults standardUserDefaults] setBool:(value) forKey:(key)]
 #define ytlSetInt(value, key) [[YTLUserDefaults standardUserDefaults] setInteger:(value) forKey:(key)]
 
+#define ytlString(key) [[YTLUserDefaults standardUserDefaults] stringForKey:key]
+#define ytlSetString(value, key) [[YTLUserDefaults standardUserDefaults] setObject:(value) forKey:(key)]
+
 @interface YTTouchFeedbackController : YTCollectionViewCell
 @property (nonatomic, strong, readwrite) UIColor *feedbackColor;
 @end

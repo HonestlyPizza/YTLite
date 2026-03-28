@@ -50,6 +50,19 @@ static UIImage *YTImageNamed(NSString *imageName) {
         }
     }
 
+    NSString *customFilters = ytlString(@"customVideoFilters");
+    if (customFilters && customFilters.length > 0) {
+        NSArray *filters = [customFilters componentsSeparatedByString:@","];
+        for (NSString *filter in filters) {
+            NSString *trimmedFilter = [filter stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if (trimmedFilter.length > 0 && [description localizedCaseInsensitiveContainsString:trimmedFilter]) {
+                if (![description containsString:@"history*"]) {
+                    return nil;
+                }
+            }
+        }
+    }
+
     return %orig;
 }
 %end

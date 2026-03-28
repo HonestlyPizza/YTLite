@@ -135,6 +135,42 @@ static NSString *GetCacheSize() {
 
     [sectionItems addObject:general];
 
+    YTSettingsSectionItem *feed = [YTSettingsSectionItemClass itemWithTitle:LOC(@"Feed")
+        accessibilityIdentifier:@"YTLiteSectionItem"
+        detailTextBlock:^NSString *() {
+            return @"‣";
+        }
+        selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+            NSArray <YTSettingsSectionItem *> *rows = @[
+                [%c(YTSettingsSectionItem) itemWithTitle:@"Custom filters"
+                    titleDescription:@"Filter keywords separated by comma"
+                    accessibilityIdentifier:@"YTLiteSectionItem"
+                    detailTextBlock:^NSString *() {
+                        NSString *filters = ytlString(@"customVideoFilters");
+                        return (filters && filters.length > 0) ? @"Set" : nil;
+                    }
+                    selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Custom filters" message:@"Enter comma-separated keywords to filter videos (e.g., keyword1, keyword2)" preferredStyle:UIAlertControllerStyleAlert];
+                        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+                            textField.text = ytlString(@"customVideoFilters") ?: @"";
+                        }];
+                        [alert addAction:[UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                            UITextField *textField = alert.textFields.firstObject;
+                            ytlSetString(textField.text, @"customVideoFilters");
+                        }]];
+                        [alert addAction:[UIAlertAction actionWithTitle:LOC(@"Cancel") style:UIAlertActionStyleCancel handler:nil]];
+                        [[%c(YTUIUtils) topViewControllerForPresenting] presentViewController:alert animated:YES completion:nil];
+                        return YES;
+                    }]
+            ];
+
+            YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"Feed") pickerSectionTitle:nil rows:rows selectedItemIndex:NSNotFound parentResponder:[self parentResponder]];
+            [settingsViewController pushViewController:picker];
+            return YES;
+        }];
+
+    [sectionItems addObject:feed];
+
     YTSettingsSectionItem *navbar = [YTSettingsSectionItemClass itemWithTitle:LOC(@"Navbar")
     accessibilityIdentifier:@"YTLiteSectionItem"
     detailTextBlock:^NSString *() {
