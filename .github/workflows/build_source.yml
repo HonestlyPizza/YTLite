@@ -99,11 +99,15 @@ jobs:
           git checkout
           mv *.sdk $THEOS/sdks
 
-      - name: Clone Headers
+      - name: Clone Headers & Tweak Interfaces
         run: |
           cd $THEOS/include && git clone --quiet --depth=1 https://github.com/PoomSmart/YouTubeHeader.git
           cd $THEOS/include && git clone --quiet --depth=1 https://github.com/PoomSmart/PSHeader.git
           echo "#define jbroot(path) path" > $THEOS/include/roothide.h
+          cd ${{ github.workspace }}/../
+          git clone --quiet --depth=1 https://github.com/PoomSmart/YouTubeHeader.git
+          git clone --quiet --depth=1 https://github.com/protocolbuffers/protobuf.git
+
 
       - name: Build Tweak
         run: |
