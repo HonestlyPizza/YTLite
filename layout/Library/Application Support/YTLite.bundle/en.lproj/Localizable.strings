@@ -88,6 +88,10 @@
 "RemovePlayablesDesc" = "Removes playables (mini-games) from the feed.";
 "FixAlbums" = "Fix covers";
 "FixAlbumsDesc" = "Fixes the display of covers for users from Russia.";
+"BlockedTerms" = "Blocked terms";
+"BlockedTermsDesc" = "Blocks feed items containing these terms (one per line).";
+"BlockedTermsPlaceholder" = "Enter terms, one per line";
+"BlockedTermsNone" = "None";
 
 /* Player options */
 "Player" = "Player";

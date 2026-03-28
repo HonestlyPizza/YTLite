@@ -38,6 +38,20 @@ static UIImage *YTImageNamed(NSString *imageName) {
 
     NSString *description = [self description];
 
+    // Block feed items containing user-defined terms (one per line)
+    NSString *blocked = [[YTLUserDefaults standardUserDefaults] stringForKey:@"feedBlockedTerms"];
+    if (blocked && blocked.length > 0) {
+        NSString *lowerDesc = [description lowercaseString];
+        NSArray *terms = [blocked componentsSeparatedByString:@"\n"];
+        for (NSString *raw in terms) {
+            NSString *term = [raw stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if (term.length == 0) continue;
+            if ([lowerDesc containsString:[term lowercaseString]]) {
+                return nil;
+            }
+        }
+    }
+
     NSArray *ads = @[@"brand_promo", @"product_carousel", @"product_engagement_panel", @"product_item", @"text_search_ad", @"text_image_button_layout", @"carousel_headered_layout", @"carousel_footered_layout", @"square_image_layout", @"landscape_image_wide_button_layout", @"feed_ad_metadata"];
     if (ytlBool(@"noAds") && [ads containsObject:description]) {
         return [NSData data];
